@@ -1,0 +1,2 @@
+npm i @prisma/client bcrypt cors dotenv express jsonwebtoken winston zod
+npm i --save-dev @types/bcrypt @types/cors @types/express @types/jsonwebtoken nodemon prisma ts-node typescript
