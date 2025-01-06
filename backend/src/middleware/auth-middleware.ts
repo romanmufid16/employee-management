@@ -6,7 +6,7 @@ import { Employee } from "@prisma/client";
 
 const verifyToken = (req: UserRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.accessToken;
-  console.log("Token dari cookies:", token);
+  // console.log("Token dari cookies:", token);
   if (!token) {
     throw new ResponseError(401, "Token is Missing");
   }

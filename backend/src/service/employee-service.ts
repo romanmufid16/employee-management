@@ -42,11 +42,6 @@ class EmployeeService {
     const employee = await prismaClient.employee.create({
       data,
     });
-
-    await redisClient.set(`employee:${employeeId}`, JSON.stringify(employee), {
-      EX: 900,
-    });
-
     return toEmployeResponse(employee);
   }
 

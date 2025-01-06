@@ -14,7 +14,7 @@ const generateAccessToken = (user: Employee) => {
     employeeId: user.employeeId,
     role: user.role,
   };
-  return jwt.sign(payload, process.env.ACCESS_SECRET!, { expiresIn: "5m" });
+  return jwt.sign(payload, process.env.ACCESS_SECRET!, { expiresIn: "1h" });
 };
 
 const generateRefreshToken = (user: Employee) => {
