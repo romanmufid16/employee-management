@@ -1,28 +1,20 @@
 import React from "react";
-import axiosInstance from "../api/axiosInstance";
-import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/Sidebar";
 
-const DashboardPage: React.FC = () => {
-  const { setIsAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
-  document.title = "Dashboard Page";
+interface DashboardProps {
+  children : React.ReactNode
+}
 
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post("/auth/logout");
-      setIsAuthenticated(false);
-      navigate("/login", { replace: true });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const DashboardPage: React.FC<DashboardProps> = ({children}) => {
+  const { user } = useAuth();
+  document.title = `${user?.name} | Dashboard Page`;
   return (
-    <div>
-      <h1>Welcome {user?.name}</h1>
-      <button onClick={handleLogout} className="bg-red-500 m-4">
-        Logout
-      </button>
+    <div className="min-h-screen flex">
+      <Sidebar/>
+      <main className="flex-1">
+        {children}
+      </main>
     </div>
   );
 };

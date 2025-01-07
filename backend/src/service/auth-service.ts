@@ -1,9 +1,13 @@
 import { prismaClient } from "../app/database";
+import logger from "../app/logging";
 import redisClient from "../app/redis";
 import { AuthResponse, LoginRequest, toAuthResponse } from "../model/auth";
 import { EmployeeResponse, toEmployeResponse } from "../model/employee";
 import ResponseError from "../model/error-response";
-import { generateAccessToken } from "../utils/generate-token";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/generate-token";
 import AuthValidation from "../validation/auth-validation";
 import ValidationHandler from "../validation/validation";
 import bcrypt from "bcrypt";
@@ -26,7 +30,7 @@ class AuthService {
     }
 
     const accessToken = generateAccessToken(user);
-    const refreshToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
     return toAuthResponse(accessToken, refreshToken);
   }
 
@@ -55,6 +59,21 @@ class AuthService {
   static async logout(id: string): Promise<void> {
     const employeeId = id;
     await redisClient.del(`user:${employeeId}`);
+  }
+
+  static async refreshToken(id: string): Promise<AuthResponse> {
+    const employeeId = id;
+    const cachedUser = await redisClient.get(`user:${employeeId}`);
+    const user = cachedUser
+      ? JSON.parse(cachedUser)
+      : await prismaClient.employee.findUnique({ where: { employeeId } });
+    if (!user) {
+      throw new ResponseError(401, "Unauthorized");
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    return toAuthResponse(accessToken, refreshToken);
   }
 }
 

@@ -10,12 +10,10 @@ class AuthController {
       res.cookie("accessToken", result.accessToken, {
         httpOnly: true,
         maxAge: 15 * 60 * 1000,
-        path: "/",
       });
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/",
       });
       res.status(200).json({
         success: true,
@@ -49,6 +47,31 @@ class AuthController {
       res.status(200).json({
         success: true,
         message: "Logout successful",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async refreshToken(
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const employeeId = req.user!.employeeId;
+      const result = await AuthService.refreshToken(employeeId);
+      res.cookie("accessToken", result.accessToken, {
+        httpOnly: true,
+        maxAge: 15 * 60 * 1000,
+      });
+      res.cookie("refreshToken", result.refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      res.status(200).json({
+        success: true,
+        message: "Token refreshed successfully",
       });
     } catch (error) {
       next(error);

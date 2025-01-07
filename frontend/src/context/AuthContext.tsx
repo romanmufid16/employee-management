@@ -20,8 +20,9 @@ interface User {
 interface AuthContextProps {
   isAuthenticated: boolean;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-  checkAuthStatus: () => Promise<void>;
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -36,28 +37,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
   const [user, setUser] = useState<User | null>(null);
 
-  const checkAuthStatus = async () => {
-    if (!isAuthenticated) return;
-
+  const logout = async () => {
     try {
-      const response = await axiosInstance.get("/auth/check");
-      setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
-      setUser(response.data.data);
-    } catch (error) {
+      await axiosInstance.post("/auth/logout");
       setIsAuthenticated(false);
-      localStorage.removeItem("isAuthenticated");
       setUser(null);
+      localStorage.removeItem("isAuthenticated");
+    } catch (error) {
+      console.error(error);
     }
-  };
+  }
 
   useEffect(() => {
-    checkAuthStatus();
+    const checkAuthUser = async () => {
+      // if (!isAuthenticated) return;
+      try {
+        const response = await axiosInstance.get("/auth/check");
+        console.log(response.data.data);
+        setUser(response.data.data);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.log("User not authenticated");
+        localStorage.removeItem("isAuthenticated");
+        setIsAuthenticated(false);
+      }
+    };
+    if (isAuthenticated) {
+      checkAuthUser();
+    }
   }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, checkAuthStatus, user }}
+      value={{ isAuthenticated, setIsAuthenticated, user, setUser, logout }}
     >
       {children}
     </AuthContext.Provider>

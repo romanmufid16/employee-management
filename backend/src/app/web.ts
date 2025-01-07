@@ -4,7 +4,7 @@ import errorMiddleware from "../middleware/error-middleware";
 import employeeRoute from "../routes/employee-route";
 import authRoutes from "../routes/auth-route";
 import cookieParser from "cookie-parser";
-import verifyToken from "../middleware/auth-middleware";
+import { verifyToken } from "../middleware/auth-middleware";
 
 const web = express();
 

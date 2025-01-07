@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosInstance";
-import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage: React.FC = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -28,6 +28,7 @@ const LoginPage: React.FC = () => {
       });
       setLoading(false);
       setIsAuthenticated(true);
+      localStorage.setItem("isAuthenticated", "true");
       navigate("/dashboard", { replace: true });
     } catch (error: any) {
       setErrorMessage(

@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import { AuthProvider } from "./context/authContext";
+import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoutes from "./components/ProtectedRoutes";
-import DashboardPage from "./pages/DashboardPage";
+import EmployeeList from "./components/EmployeeList";
+import Overview from "./components/Overview";
 
 function App() {
   return (
@@ -14,7 +15,15 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoutes>
-                <DashboardPage />
+                <Overview />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/dashboard/employees"
+            element={
+              <ProtectedRoutes>
+                <EmployeeList />
               </ProtectedRoutes>
             }
           />
